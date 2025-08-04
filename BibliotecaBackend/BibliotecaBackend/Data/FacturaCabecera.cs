@@ -7,7 +7,7 @@ public partial class FacturaCabecera
 {
     public int NumeroFactura { get; set; }
 
-    public DateOnly Fecha { get; set; }
+    public DateTime Fecha { get; set; }
 
     public int CodigoCiudadEntrega { get; set; }
 

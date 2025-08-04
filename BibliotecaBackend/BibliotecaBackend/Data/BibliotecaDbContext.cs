@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using BibliotecaBackend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BibliotecaBackend.Data;
 
 public partial class BibliotecaDbContext : DbContext
 {
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
-    public DbSet<SesionChat> SesionesChat { get; set; }
-    public DbSet<MensajeChat> MensajesChat { get; set; }
-    public virtual DbSet<Usuario> Usuarios { get; set; }
+    public BibliotecaDbContext()
+    {
+    }
+
+    public BibliotecaDbContext(DbContextOptions<BibliotecaDbContext> options)
+        : base(options)
+    {
+    }
+
     public virtual DbSet<Articulo> Articulos { get; set; }
 
-    // Tablas del Sistema
     public virtual DbSet<AsientoContable> AsientoContables { get; set; }
 
     public virtual DbSet<CiudadEntrega> CiudadEntregas { get; set; }
@@ -32,86 +35,13 @@ public partial class BibliotecaDbContext : DbContext
 
     public virtual DbSet<NominaDetalle> NominaDetalles { get; set; }
 
-
-    public BibliotecaDbContext()
-    {
-    }
-
-    public BibliotecaDbContext(DbContextOptions<BibliotecaDbContext> options)
-        : base(options)
-    {
-    }
-
-    
+    public virtual DbSet<Usuario> Usuarios { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=localhost;Database=Biblioteca;Integrated Security=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=Biblioteca;Integrated Security=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Usuario>(entity =>
-        {
-            entity.ToTable("Usuario");
-
-            entity.HasKey(e => e.Id);
-
-            entity.Property(e => e.NombreUsuario)
-                  .IsRequired()
-                  .HasMaxLength(50);
-
-            entity.Property(e => e.Correo)
-                  .IsRequired();
-
-            entity.Property(e => e.ContrasenaHash)
-                  .IsRequired();
-
-            entity.Property(e => e.Rol)
-                  .IsRequired();
-
-            entity.Property(e => e.FechaCreacion)
-                  .HasDefaultValueSql("GETDATE()");
-        });
-
-
-        modelBuilder.Entity<RefreshToken>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Token).HasMaxLength(500).IsRequired();
-            entity.Property(e => e.CreadoPorIp).HasMaxLength(50);
-            entity.Property(e => e.RevocadoPorIp).HasMaxLength(50);
-            entity.Property(e => e.TokenReemplazo).HasMaxLength(500);
-
-            entity.HasOne(d => d.Usuario)
-                .WithMany()
-                .HasForeignKey(d => d.UsuarioId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<SesionChat>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.ConnectionId).HasMaxLength(100).IsRequired();
-            entity.Property(e => e.PantallaContexto).HasMaxLength(100);
-
-            entity.HasOne(d => d.Usuario)
-                .WithMany()
-                .HasForeignKey(d => d.UsuarioId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<MensajeChat>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Mensaje).HasMaxLength(1000).IsRequired();
-
-            entity.HasOne(d => d.SesionChat)
-                .WithMany(p => p.Mensajes)
-                .HasForeignKey(d => d.SesionChatId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-
-
         modelBuilder.Entity<Articulo>(entity =>
         {
             entity.HasKey(e => e.CodigoArticulo).HasName("PK__Articulo__5A774984D784A8C7");
@@ -262,10 +192,22 @@ public partial class BibliotecaDbContext : DbContext
                 .HasConstraintName("FK_NominaDet_Cabecera");
         });
 
+        modelBuilder.Entity<Usuario>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Usuario__3214EC076208CCDF");
+
+            entity.ToTable("Usuario");
+
+            entity.Property(e => e.Correo).HasMaxLength(100);
+            entity.Property(e => e.FechaCreacion)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.NombreUsuario).HasMaxLength(50);
+            entity.Property(e => e.Rol).HasMaxLength(50);
+        });
+
         OnModelCreatingPartial(modelBuilder);
-        
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-    
 }

@@ -7,7 +7,7 @@ public partial class AsientoContable
 {
     public Guid IdAsientoContable { get; set; }
 
-    public DateOnly Fecha { get; set; }
+    public DateTime Fecha { get; set; }
 
     public string TipoOperacion { get; set; } = null!;
 
