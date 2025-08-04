@@ -56,9 +56,9 @@ BEGIN
 END;
 GO
 
--- 3. Trigger para generar asiento contable al registrar una nómina
+-- 3. Creamos el nuevo trigger en NominaDetalle
 CREATE TRIGGER trg_AsientoNomina
-ON NominaCabecera
+ON NominaDetalle
 AFTER INSERT
 AS
 BEGIN
@@ -66,14 +66,14 @@ BEGIN
 
     INSERT INTO AsientoContable (Fecha, TipoOperacion, Referencia, CuentaDebito, CuentaCredito, Monto)
     SELECT 
-        i.Fecha,
+        nc.Fecha,
         'Nomina',
         i.NumeroNomina,
         '5101-Gastos de Personal',
         '1102-Banco',
-        SUM(nd.Valor)
+        SUM(i.Valor)
     FROM inserted i
-    JOIN NominaDetalle nd ON nd.NumeroNomina = i.NumeroNomina
-    GROUP BY i.NumeroNomina, i.Fecha;
+    JOIN NominaCabecera nc ON nc.NumeroNomina = i.NumeroNomina
+    GROUP BY i.NumeroNomina, nc.Fecha;
 END;
 GO

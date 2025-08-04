@@ -1,4 +1,6 @@
-﻿namespace BibliotecaBackend.Models
+﻿using BibliotecaBackend.Data;
+
+namespace BibliotecaBackend.Models
 {
     public class RefreshToken
     {
@@ -11,7 +13,7 @@
         public string? RevocadoPorIp { get; set; }
         public string? TokenReemplazo { get; set; }
 
-        public string UsuarioId { get; set; } = string.Empty;
+        public int UsuarioId { get; set; } 
         public Usuario Usuario { get; set; } = null!;
 
         public bool EstaActivo => FechaRevocacion == null && !EstaExpirado;

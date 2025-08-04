@@ -2,6 +2,8 @@
 using System.Security.Claims;
 using System.Text;
 using BibliotecaBackend.Data;
+
+//using BibliotecaBackend.Data;
 using BibliotecaBackend.DTOs.Auth;
 using BibliotecaBackend.Models;
 using Microsoft.AspNetCore.Identity;
@@ -33,7 +35,7 @@ namespace BibliotecaBackend.Services
                 Rol = request.Rol
             };
 
-            usuario.ContrasenaHash = _hasher.HashPassword(usuario, request.Contrasenia);
+            usuario.ContraseniaHash = _hasher.HashPassword(usuario, request.Contrasenia);
 
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
@@ -47,7 +49,7 @@ namespace BibliotecaBackend.Services
             if (usuario == null)
                 throw new Exception("Usuario no encontrado.");
 
-            var resultado = _hasher.VerifyHashedPassword(usuario, usuario.ContrasenaHash, request.Contrasenia);
+            var resultado = _hasher.VerifyHashedPassword(usuario, usuario.ContraseniaHash, request.Contrasenia);
             if (resultado == PasswordVerificationResult.Failed)
                 throw new Exception("Contraseña incorrecta.");
 
@@ -82,5 +84,6 @@ namespace BibliotecaBackend.Services
                 Rol = usuario.Rol
             };
         }
+       
     }
 }

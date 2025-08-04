@@ -1,9 +1,11 @@
-﻿namespace BibliotecaBackend.Models
+﻿using BibliotecaBackend.Data;
+
+namespace BibliotecaBackend.Models
 {
     public class SesionChat
     {
         public int Id { get; set; }
-        public string UsuarioId { get; set; } = string.Empty;
+        public int UsuarioId { get; set; }
         public string ConnectionId { get; set; } = string.Empty;
         public DateTime FechaInicio { get; set; } = DateTime.UtcNow;
         public DateTime? FechaFin { get; set; }
