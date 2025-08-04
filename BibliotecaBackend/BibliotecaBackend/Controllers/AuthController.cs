@@ -1,5 +1,7 @@
-﻿using BibliotecaBackend.Models;
+﻿using System.Security.Claims;
+using BibliotecaBackend.Models;
 using BibliotecaBackend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BibliotecaBackend.Controllers
@@ -26,7 +28,9 @@ namespace BibliotecaBackend.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { mensaje = ex.Message });
+                var innerMessage = ex.InnerException?.Message;
+                return BadRequest(new { mensaje = ex.Message, detalle = innerMessage });
+                
             }
         }
 
@@ -43,6 +47,21 @@ namespace BibliotecaBackend.Controllers
                 return Unauthorized(new { mensaje = ex.Message });
             }
         }
+
+        [Authorize]
+        [HttpGet("me")]
+        public IActionResult GetPerfil()
+        {
+            var usuario = new
+            {
+                NombreUsuario = User.FindFirstValue(ClaimTypes.Name),
+                Correo = User.FindFirstValue(ClaimTypes.Email),
+                Rol = User.FindFirstValue(ClaimTypes.Role)
+            };
+
+            return Ok(usuario);
+        }
+
     }
     
 }
