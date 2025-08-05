@@ -1,29 +1,32 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import MainLayout from './layout/MainLayout';
+import ClienteView from './pages/ClienteView';
+import ArticulosView from './pages/ArticulosView';
 import Login from './Login/Login';
 import Register from './Login/Register';
-import ClienteView from './pages/ClienteView'; // <-- NUEVA VISTA
-import RequireAuth from './auth/RequireAuth'; // <-- Middleware auth
+import RequireAuth from './auth/RequireAuth'; // token check
 
 export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/clientes" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* RUTA PROTEGIDA */}
         <Route
-          path="/clientes"
+          path="/"
           element={
             <RequireAuth>
-              <ClienteView />
+              <MainLayout />
             </RequireAuth>
           }
-        />
+        >
+          <Route path="clientes" element={<ClienteView />} />
+          <Route path="articulos" element={<ArticulosView />} />
+        </Route>
       </Routes>
     </Router>
   );
 }
-

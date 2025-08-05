@@ -1,14 +1,66 @@
 // src/components/Navbar.jsx
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  const handleLogout = () => {
+    Cookies.remove('auth_token');
+    navigate('/login');
+  };
+
+  const toggleNavbar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
-    <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
-      <div className="font-bold text-xl text-gray-800">BookWise</div>
-      <div className="space-x-6">
-        <Link to="/clientes" className="text-gray-700 hover:text-blue-600">Clientes</Link>
-        <button className="text-gray-700 hover:text-blue-600">Cerrar sesión</button>
+    <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+      <div className="container-fluid">
+        {/* Brand */}
+        <Link className="navbar-brand fw-bold text-primary" to="/clientes">
+          BookWise
+        </Link>
+
+        {/* Botón hamburguesa - solo visible en móviles */}
+        <button
+          className="navbar-toggler d-lg-none"
+          type="button"
+          onClick={toggleNavbar}
+          aria-controls="navbarNav"
+          aria-expanded={!isCollapsed}
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        {/* Menú - visible en escritorio, colapsable en móviles */}
+        <div 
+          className={`navbar-collapse d-lg-flex ${isCollapsed ? 'd-none d-lg-flex' : 'd-flex'}`} 
+          id="navbarNav"
+        >
+          <ul className="navbar-nav me-auto">
+            <li className="nav-item">
+              <Link to="/clientes" className="nav-link fw-semibold text-dark">
+                Clientes
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/articulos" className="nav-link fw-semibold text-dark">
+                Artículos
+              </Link>
+            </li>
+          </ul>
+
+          <button 
+            onClick={handleLogout} 
+            className="btn btn-outline-danger btn-sm"
+          >
+            Cerrar sesión
+          </button>
+        </div>
       </div>
     </nav>
   );
