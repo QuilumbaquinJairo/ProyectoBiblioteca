@@ -29,8 +29,7 @@ export default function Login() {
       const data = await res.json();
       Cookies.set('auth_token', data.token, { expires: 1, secure: true, sameSite: 'Strict' });
 
-      // Redirigir a otra vista protegida si se desea
-      console.log('Login successful');
+      navigate('/clientes'); // Redirección al panel de clientes
     } catch (err) {
       setError(err.message);
     }

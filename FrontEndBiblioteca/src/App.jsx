@@ -6,6 +6,7 @@ import ArticulosView from './pages/ArticulosView';
 import Login from './Login/Login';
 import Register from './Login/Register';
 import RequireAuth from './auth/RequireAuth'; // token check
+import FacturasView from './pages/FacturasView';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         >
           <Route path="clientes" element={<ClienteView />} />
           <Route path="articulos" element={<ArticulosView />} />
+          <Route path="facturas" element={<FacturasView />} />
         </Route>
       </Routes>
     </Router>

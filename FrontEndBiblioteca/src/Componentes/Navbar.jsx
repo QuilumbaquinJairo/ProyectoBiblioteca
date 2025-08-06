@@ -52,6 +52,11 @@ export default function Navbar() {
                 Artículos
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/facturas" className="nav-link fw-semibold text-dark">
+                Facturas
+              </Link>
+            </li>
           </ul>
 
           <button 
