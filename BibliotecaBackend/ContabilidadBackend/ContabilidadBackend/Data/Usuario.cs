@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace ContabilidadBackend.Data;
+
+public partial class Usuario
+{
+    public int Id { get; set; }
+
+    public string NombreUsuario { get; set; } = null!;
+
+    public string Correo { get; set; } = null!;
+
+    public string ContraseniaHash { get; set; } = null!;
+
+    public string Rol { get; set; } = null!;
+
+    public DateTime FechaCreacion { get; set; }
+}

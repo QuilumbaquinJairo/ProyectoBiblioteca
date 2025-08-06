@@ -29,7 +29,7 @@ export default function Login() {
       const data = await res.json();
       Cookies.set('auth_token', data.token, { expires: 1, secure: true, sameSite: 'Strict' });
 
-      navigate('/clientes'); // Redirección al panel de clientes
+      navigate('/facturas'); // Redirección al panel de clientes
     } catch (err) {
       setError(err.message);
     }

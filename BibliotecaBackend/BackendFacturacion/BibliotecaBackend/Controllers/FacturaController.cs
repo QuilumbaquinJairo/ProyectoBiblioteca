@@ -12,10 +12,13 @@ namespace BibliotecaBackend.Controllers
     public class FacturaController : ControllerBase
     {
         private readonly BibliotecaDbContext _context;
-
-        public FacturaController(BibliotecaDbContext context)
+        private readonly RabbitMqService _rabbitMq;
+        private readonly ILogger<FacturaController> _logger;
+        public FacturaController(BibliotecaDbContext context, RabbitMqService rabbitMq, ILogger<FacturaController> logger)
         {
             _context = context;
+            _rabbitMq = rabbitMq;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -58,9 +61,13 @@ namespace BibliotecaBackend.Controllers
                     });
                 }
 
-                // Asiento contable manual
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                // Enviar mensaje a RabbitMQ en lugar de registrar asiento contable directamente
                 var total = dto.Detalles.Sum(d => d.Cantidad * d.Precio);
-                _context.AsientoContables.Add(new AsientoContable
+
+                var mensaje = new AsientoContable
                 {
                     Fecha = dto.Fecha,
                     TipoOperacion = "Factura",
@@ -68,10 +75,10 @@ namespace BibliotecaBackend.Controllers
                     CuentaDebito = "1101-Cuentas por Cobrar",
                     CuentaCredito = "4101-Ventas",
                     Monto = total
-                });
+                };
 
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                await _rabbitMq.PublishFacturaAsync(mensaje);
+                _logger.LogInformation("Mensaje de factura {NumeroFactura} enviado correctamente al broker RabbitMQ.", cabecera.NumeroFactura);
 
                 return Ok(new { cabecera.NumeroFactura });
             }
