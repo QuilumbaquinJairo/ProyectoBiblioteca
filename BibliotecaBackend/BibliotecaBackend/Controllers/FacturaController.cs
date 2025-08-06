@@ -82,5 +82,88 @@ namespace BibliotecaBackend.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] string? rucCliente, [FromQuery] DateTime? desde, [FromQuery] DateTime? hasta)
+        {
+            var query = _context.FacturaCabeceras
+                .Include(f => f.RucclienteNavigation)
+                .Include(f => f.CodigoCiudadEntregaNavigation)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(rucCliente))
+                query = query.Where(f => f.Ruccliente == rucCliente);
+
+            if (desde.HasValue)
+                query = query.Where(f => f.Fecha >= desde.Value.Date);
+
+            if (hasta.HasValue)
+                query = query.Where(f => f.Fecha <= hasta.Value.Date);
+
+            var result = await query
+                .OrderByDescending(f => f.Fecha)
+                .Select(f => new
+                {
+                    f.NumeroFactura,
+                    f.Fecha,
+                    Cliente = f.RucclienteNavigation.Ruc,
+                    CiudadEntrega = f.CodigoCiudadEntregaNavigation.NombreCiudad,
+                    Total = _context.FacturaDetalles
+                        .Where(d => d.NumeroFactura == f.NumeroFactura)
+                        .Sum(d => d.Cantidad * d.Precio)
+                })
+                .ToListAsync();
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var factura = await _context.FacturaCabeceras
+                .Include(f => f.RucclienteNavigation)
+                .Include(f => f.CodigoCiudadEntregaNavigation)
+                .Include(f => f.FacturaDetalles)
+                    .ThenInclude(d => d.CodigoArticuloNavigation)
+                .FirstOrDefaultAsync(f => f.NumeroFactura == id);
+
+            if (factura == null) return NotFound();
+
+            return Ok(new
+            {
+                factura.NumeroFactura,
+                factura.Fecha,
+                Cliente = factura.RucclienteNavigation.Nombre,
+                Ciudad = factura.CodigoCiudadEntregaNavigation.NombreCiudad,
+                Detalles = factura.FacturaDetalles.Select(d => new
+                {
+                    d.CodigoArticulo,
+                    Articulo = d.CodigoArticuloNavigation.NombreArticulo,
+                    d.Cantidad,
+                    d.Precio,
+                    Subtotal = d.Cantidad * d.Precio
+                }),
+                Total = factura.FacturaDetalles.Sum(d => d.Cantidad * d.Precio)
+            });
+        }
+
+        [Authorize(Roles = "Administrador")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var factura = await _context.FacturaCabeceras
+                .Include(f => f.FacturaDetalles)
+                .FirstOrDefaultAsync(f => f.NumeroFactura == id);
+
+            if (factura == null)
+                return NotFound();
+
+            _context.FacturaCabeceras.Remove(factura);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+
     }
 }
