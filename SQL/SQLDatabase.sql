@@ -1,4 +1,4 @@
--- Tabla de Ciudades (Catálogo)
+-- Tabla de Ciudades (Catï¿½logo)
 CREATE TABLE CiudadEntrega (
     CodigoCiudad INT IDENTITY(1,1) PRIMARY KEY,
     NombreCiudad NVARCHAR(100) NOT NULL
@@ -11,11 +11,12 @@ CREATE TABLE Cliente (
     Direccion NVARCHAR(200) NOT NULL
 );
 
--- Tabla de Artículos (requiere para facturación)
+-- Tabla de Artï¿½culos (requiere para facturaciï¿½n)
 CREATE TABLE Articulo (
     CodigoArticulo INT IDENTITY(1,1) PRIMARY KEY,
     NombreArticulo NVARCHAR(100) NOT NULL,
     SaldoInventario INT NOT NULL
+    Precio DECIMAL(18,2) NOT NULL
 );
 
 -- Cabecera de Facturas
@@ -43,7 +44,7 @@ CREATE TABLE FacturaDetalle (
         REFERENCES Articulo(CodigoArticulo)
 );
 
--- Tabla Motivos de Nómina
+-- Tabla Motivos de Nï¿½mina
 CREATE TABLE MotivoNomina (
     CodigoMotivo INT IDENTITY(1,1) PRIMARY KEY,
     NombreMotivo NVARCHAR(100) NOT NULL,
@@ -58,7 +59,7 @@ CREATE TABLE Empleado (
     Sueldo DECIMAL(18,2) NOT NULL CHECK (Sueldo >= 0)
 );
 
--- Cabecera de Nómina
+-- Cabecera de Nï¿½mina
 CREATE TABLE NominaCabecera (
     NumeroNomina INT IDENTITY(1,1) PRIMARY KEY,
     Fecha DATE NOT NULL,
@@ -67,7 +68,7 @@ CREATE TABLE NominaCabecera (
         REFERENCES Empleado(Cedula) ON DELETE CASCADE
 );
 
--- Detalle de Nómina
+-- Detalle de Nï¿½mina
 CREATE TABLE NominaDetalle (
     IdNominaDetalle INT IDENTITY(1,1) PRIMARY KEY,
     NumeroNomina INT NOT NULL,
@@ -79,11 +80,11 @@ CREATE TABLE NominaDetalle (
         REFERENCES MotivoNomina(CodigoMotivo)
 );
 
--- Tabla Asientos Contables Automáticos
+-- Tabla Asientos Contables Automï¿½ticos
 CREATE TABLE AsientoContable (
     IdAsientoContable UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
     Fecha DATE NOT NULL,
-    TipoOperacion NVARCHAR(50) NOT NULL, -- Ej: 'Factura', 'Nómina'
+    TipoOperacion NVARCHAR(50) NOT NULL, -- Ej: 'Factura', 'Nï¿½mina'
     Referencia INT NOT NULL,
     CuentaDebito NVARCHAR(50) NOT NULL,
     CuentaCredito NVARCHAR(50) NOT NULL,
