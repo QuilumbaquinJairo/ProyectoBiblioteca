@@ -62,6 +62,16 @@ namespace BibliotecaBackend.Controllers
             return Ok(usuario);
         }
 
+        [AllowAnonymous]
+        [HttpGet("helpchat/disponible")]
+        public IActionResult VerificarDisponibilidad([FromServices] ChatWebSocketHandler chatService)
+        {
+            var disponible = chatService.HayAgentesConectados();
+            return Ok(new { disponible });
+        }
+
+
+
     }
-    
+
 }

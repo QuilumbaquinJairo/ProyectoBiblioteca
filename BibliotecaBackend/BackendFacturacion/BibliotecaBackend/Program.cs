@@ -40,6 +40,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<RabbitMqService>();
+builder.Services.AddSingleton<ChatWebSocketHandler>();
 
 
 builder.Services.AddSwaggerGen(c =>
@@ -80,8 +81,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-
-
 var app = builder.Build();
 
 
@@ -93,6 +92,19 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
+app.UseWebSockets();
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/auth/helpchat/ws")
+    {
+        var handler = context.RequestServices.GetRequiredService<ChatWebSocketHandler>();
+        await handler.HandleAsync(context);
+    }
+    else
+    {
+        await next();
+    }
+});
 
 
 app.UseHttpsRedirection();
