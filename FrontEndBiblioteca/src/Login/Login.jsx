@@ -27,7 +27,14 @@ export default function Login() {
       }
 
       const data = await res.json();
-      Cookies.set('auth_token', data.token, { expires: 1, secure: true, sameSite: 'Strict' });
+      Cookies.set('auth_token', data.token, { expires: 1 });
+      Cookies.set('auth_rol', data.rol, { expires: 1});
+      if (data.rol === 'Administrador') {
+        Cookies.set('auth_id', 'admin'); // ID fijo
+      } else {
+        Cookies.set('auth_id', data.correo, { expires: 1 });
+      }
+
 
       navigate('/facturas'); // Redirección al panel de clientes
     } catch (err) {

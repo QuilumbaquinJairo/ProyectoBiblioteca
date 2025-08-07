@@ -8,9 +8,11 @@ import Register from './Login/Register';
 import RequireAuth from './auth/RequireAuth'; // token check
 import FacturasView from './pages/FacturasView';
 import CiudadView from './pages/CiudadView';
+import HelpButton from './Componentes/HelpButton';
 
 export default function App() {
   return (
+    <>  
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/clientes" />} />
@@ -32,5 +34,7 @@ export default function App() {
         </Route>
       </Routes>
     </Router>
+    <HelpButton />
+    </>
   );
 }
