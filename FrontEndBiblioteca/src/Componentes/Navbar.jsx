@@ -62,6 +62,11 @@ export default function Navbar() {
                 Ciudades
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/reportes" className="nav-link fw-semibold text-dark">
+                Reportes
+              </Link>
+            </li>
           </ul>
 
           <button 

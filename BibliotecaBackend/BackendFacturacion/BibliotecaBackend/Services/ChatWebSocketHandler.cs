@@ -67,27 +67,27 @@ public class ChatWebSocketHandler
                 if (!_asignaciones.ContainsKey(cliente.Key))
                 {
                     _asignaciones.TryAdd(cliente.Key, id);
-                    Console.WriteLine($"Cliente {cliente.Key} asignado a nuevo agente {id}");
+                    Console.WriteLine($"Empleado {cliente.Key} asignado a nuevo agente {id}");
                 }
             }
         }
 
-        else if (rol == "cliente")
+        else if (rol == "Empleado")
         {
-            Console.WriteLine($"Registrando CLIENTE: {id}");
+            Console.WriteLine($"Registrando Empleado: {id}");
             _clientes.TryAdd(id, client);
 
             var agenteDisponible = _agentes.Values.FirstOrDefault(a => a.Socket.State == WebSocketState.Open);
             if (agenteDisponible != null)
             {
                 _asignaciones.TryAdd(id, agenteDisponible.Id);
-                Console.WriteLine($"Cliente {id} asignado a agente {agenteDisponible.Id}");
+                Console.WriteLine($"Empleado {id} asignado a agente {agenteDisponible.Id}");
             }
             else
             {
                 Console.WriteLine($"No hay agentes disponibles para cliente {id}");
             }
-            Console.WriteLine($"Total clientes: {_clientes.Count}");
+            Console.WriteLine($"Total Empleado: {_clientes.Count}");
             Console.WriteLine($"Total asignaciones: {_asignaciones.Count}");
         }
 
@@ -99,11 +99,11 @@ public class ChatWebSocketHandler
             _agentes.TryRemove(id, out _);
             Console.WriteLine($"Agente {id} desconectado");
         }
-        if (rol == "cliente")
+        if (rol == "Empleado")
         {
             _clientes.TryRemove(id, out _);
             _asignaciones.TryRemove(id, out _);
-            Console.WriteLine($"Cliente {id} desconectado");
+            Console.WriteLine($"Empleado {id} desconectado");
         }
     }
 
@@ -116,9 +116,9 @@ public class ChatWebSocketHandler
         Console.WriteLine($"Mensaje: {mensaje.Mensaje}");
         Console.WriteLine($"DestinoId: {mensaje.DestinoId}");
 
-        if (remitente.Rol == "cliente" && _asignaciones.TryGetValue(remitente.Id, out var agenteId))
+        if (remitente.Rol == "Empleado" && _asignaciones.TryGetValue(remitente.Id, out var agenteId))
         {
-            Console.WriteLine($"Cliente {remitente.Id} tiene asignado agente {agenteId}");
+            Console.WriteLine($"Empleado {remitente.Id} tiene asignado agente {agenteId}");
             receptor = _agentes.GetValueOrDefault(agenteId);
             Console.WriteLine($"Agente encontrado: {receptor != null}");
         }
@@ -126,7 +126,7 @@ public class ChatWebSocketHandler
         {
             Console.WriteLine($"Agente quiere enviar a: {mensaje.DestinoId}");
             receptor = _clientes.GetValueOrDefault(mensaje.DestinoId ?? "");
-            Console.WriteLine($"Cliente encontrado: {receptor != null}");
+            Console.WriteLine($"Empleado encontrado: {receptor != null}");
         }
 
         if (receptor is not null && receptor.Socket.State == WebSocketState.Open)
@@ -167,7 +167,7 @@ public class ChatWebSocketHandler
 
             if (result.MessageType == WebSocketMessageType.Close)
             {
-                await client.Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Cerrado por el cliente", CancellationToken.None);
+                await client.Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Cerrado por el Empleado", CancellationToken.None);
                 return;
             }
 
@@ -175,7 +175,7 @@ public class ChatWebSocketHandler
 
             // === DEBUG LOGS ===
             Console.WriteLine($"=== MENSAJE RECIBIDO ===");
-            Console.WriteLine($"Cliente: {client.Id} (Rol: {client.Rol})");
+            Console.WriteLine($"Empleado: {client.Id} (Rol: {client.Rol})");
             Console.WriteLine($"Raw data: '{raw}'");
             Console.WriteLine($"Length: {raw.Length}");
             Console.WriteLine("========================");

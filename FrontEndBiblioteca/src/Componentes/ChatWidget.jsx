@@ -64,7 +64,7 @@ export default function ChatWidget({ onClose }) {
         setMessages(prev => [
           ...prev,
           {
-            sender: rol === 'Administrador' ? `Cliente ${de}` : 'Agente',
+            sender: rol === 'Administrador' ? `Empleado ${de}` : 'Agente',
             text: mensaje,
             time: new Date().toLocaleTimeString()
           }
@@ -185,7 +185,7 @@ export default function ChatWidget({ onClose }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                if (rol === 'cliente') {
+                if (rol === 'Empleado') {
                   sendMessage();
                 } else if (clientesList.length > 0) {
                   sendMessage(clientesList[0]); // Enviar al primer cliente por defecto
@@ -196,7 +196,7 @@ export default function ChatWidget({ onClose }) {
           <button 
             className="btn btn-primary ms-2" 
             onClick={() => {
-              if (rol === 'cliente') {
+              if (rol === 'Empleado') {
                 sendMessage();
               } else if (clientesList.length > 0) {
                 sendMessage(clientesList[0]);

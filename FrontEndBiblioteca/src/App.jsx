@@ -9,6 +9,7 @@ import RequireAuth from './auth/RequireAuth'; // token check
 import FacturasView from './pages/FacturasView';
 import CiudadView from './pages/CiudadView';
 import HelpButton from './Componentes/HelpButton';
+import ReporteVentasCiudad from './pages/ReporteVentasCiudad';
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="articulos" element={<ArticulosView />} />
           <Route path="facturas" element={<FacturasView />} />
           <Route path="ciudades" element={<CiudadView />} />
+          <Route path="reportes" element={<ReporteVentasCiudad />} />
         </Route>
       </Routes>
     </Router>
